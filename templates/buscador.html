@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscador de Productos</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f9; }
+        .container { max-width: 700px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; }
+        .search-bar { display: flex; gap: 10px; margin-bottom: 20px; }
+        input { flex: 1; padding: 10px; border: 1px solid #ccc; }
+        button { padding: 10px 20px; background-color: #007bff; color: white; border: none; cursor: pointer; }
+        .result-card { background: #e9ecef; padding: 20px; border-radius: 5px; display: none; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Buscador de Productos</h2>
+        <div class="search-bar">
+            <input type="text" id="codigo-input" placeholder="Ingrese el código (Ej: P001)">
+            <button onclick="buscarProducto()">Buscar</button>
+        </div>
+
+        <div id="error-msg" style="color: red; display: none;">Producto no encontrado.</div>
+
+        <div class="result-card" id="resultado">
+            <h3 id="r-nombre"></h3>
+            <p><strong>Código:</strong> <span id="r-codigo"></span></p>
+            <p><strong>Descripción:</strong> <span id="r-desc"></span></p>
+            <p><strong>Categoría:</strong> <span id="r-cat"></span></p>
+            <p><strong>Precio:</strong> S/ <span id="r-precio"></span></p>
+            <p><strong>Stock:</strong> <span id="r-stock"></span></p>
+        </div>
+
+        <br>
+        <a href="principal.html">Regresar al panel</a>
+    </div>
+
+    <script>
+        const BACKEND_URL = "http://localhost:5000";
+
+        if (!localStorage.getItem('usuarioNombre')) window.location.href = 'login.html';
+
+        async function buscarProducto() {
+            const codigo = document.getElementById('codigo-input').value;
+            const errorMsg = document.getElementById('error-msg');
+            const resultCard = document.getElementById('resultado');
+
+            errorMsg.style.display = 'none';
+            resultCard.style.display = 'none';
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/buscar_producto`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ codigo: codigo })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    const p = data.producto;
+                    document.getElementById('r-nombre').innerText = p.nombre;
+                    document.getElementById('r-codigo').innerText = p.codigo;
+                    document.getElementById('r-desc').innerText = p.descripcion;
+                    document.getElementById('r-cat').innerText = p.categoria;
+                    document.getElementById('r-precio').innerText = p.precio;
+                    document.getElementById('r-stock').innerText = p.stock;
+                    
+                    resultCard.style.display = 'block';
+                } else {
+                    errorMsg.style.display = 'block';
+                }
+            } catch (error) {
+                alert('Error al comunicar con el servidor');
+            }
+        }
+    </script>
+</body>
+</html>

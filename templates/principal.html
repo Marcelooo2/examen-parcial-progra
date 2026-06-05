@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Principal</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f9; text-align: center; }
+        .dashboard { background: white; max-width: 600px; margin: 50px auto; padding: 40px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .btn { display: inline-block; margin: 15px; padding: 12px 24px; text-decoration: none; border-radius: 5px; color: white; }
+        .btn-search { background-color: #28a745; }
+        .btn-exit { background-color: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <h1>Bienvenido, <span id="nombre-usuario"></span></h1>
+        
+        <a href="buscador.html" class="btn btn-search">Buscador de Productos</a>
+        <a href="#" onclick="cerrarSesion()" class="btn btn-exit">Salir del Sistema</a>
+    </div>
+
+    <script>
+        const nombre = localStorage.getItem('usuarioNombre');
+        if (!nombre) window.location.href = 'login.html';
+        else document.getElementById('nombre-usuario').innerText = nombre;
+
+        function cerrarSesion() {
+            localStorage.removeItem('usuarioNombre');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
